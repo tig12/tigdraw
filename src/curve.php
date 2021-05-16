@@ -1,27 +1,23 @@
 <?php
 /******************************************************************************
-    Generates SVG horizontal bar chart from a distribution.
-    A distribution is an associative array, see param $data. 
-        
+    Displays 1 to n curves with their legends.
+    
     @license    GPL
-    @history    2021-02-28 23:08:04+01:00, Thierry Graff : refactor, moved from commands to parts
-    @history    2020-12-20 18:48:55+01:00, Thierry Graff : Creation
+    @history    2021-05-09 03:27:12+01:00, Thierry Graff : Creation from bar.php
 ********************************************************************************/
 namespace tigdraw;
 
-class bar {
+class curve {
     
     /** 
-        Computes the svg markup of a distribution (one distribution only).
+        Computes the svg markup of a 1 to n distributions.
         
         Layout : the image is composed of legends, gaps and a bar area (containing only the bars).
         Bar area height is imposed (parameter $barH) ; bar width is computed.
         Image total height and width ($w and $h) are computed (= bar size + lengends and gaps).
         @return See {@link observe\parts\draw\svg::result()} documentation 
         @param  $data               The data to represent.
-                                    Must be an associative array.
-                                    keys = x, values on the x axis.
-                                    values = y, corresponding values on the y axis, = nb of occurences of x in the distribution.
+                                    Associative or regular array.
         @param  $stats              Associative array containing statistical informations about the distribution.
                                     Possible keys:
                                         - mean
@@ -33,6 +29,7 @@ class bar {
                                     In generated client page : <img src="$img_src">
         @param  $img_alt            Useful only if $svg_separate = true
                                     In generated client page : <img alt="$img_alt">
+        @param  $drawAreaH          in px - height of the area where curves are drawn.
         @param  $hGap               in px - horizontal (left and right) gap of the image.
         @param  $vGap               in px - vertical (left and right) gap of the image.
         @param  $background         Background color of the image.
@@ -42,7 +39,6 @@ class bar {
         @param  $titleBottomGap     in px - gap between the title and bar area.
                                     Set to 0 if title = empty string.
         // bar
-        @param  $drawArea           in px - height of the bar area.
         @param  $barW               in px - width of each vertical bar.
         @param  $barGap             in px - space between 2 vertical bars.
         @param  $barColor           Color of the vertical bars.
@@ -79,47 +75,12 @@ class bar {
                     - $res[0] = markup of the <svg>.
                     - $res[1] = null
     **/
-    public static function svg(
-            array   $data = [],
-            // image, general
-            bool    $svg_separate,
-            string  $img_src = '',
-            string  $img_alt = '',
-            int     $hGap = 25,
-            int     $vGap = 15,
-            string  $background = 'moccasin',
-            // title
-            string  $title = '',
-            int     $titleH = 22,
-            int     $titleBottomGap = 15,
-            // bar
-            int     $drawArea = 250,
-            int     $barW = 2,
-            int     $barGap = 1,
-            string  $barColor = 'slategray',
-            bool    $barHover = true,
-            // x and y axis
-            bool    $xAxis = true,
-            string  $xAxisStyle = 'stroke:black;stroke-width:1;',
-            bool    $yAxis = true,
-            string  $yAxisStyle = 'stroke:black;stroke-width:1;',
-            // x legends
-            array   $xlegends = [],
-            int     $xlegendsH = 12,
-            int     $xlegendsTopGap = 5,
-            // y legends
-            array   $ylegends = [],
-            int     $ylegendsW = 40,
-            int     $ylegendsH = 12,
-            int     $ylegendsRightGap = 5,
-            int     $ylegendsRound = 0,
-            // other
-            array   $stats = [],
-            bool    $meanLine = false,
-        ){
+    public static function svg(array $params = []){
+echo "\n<pre>"; print_r($params); echo "</pre>\n"; exit;
         $svg = '';
         // characteristics of data
         $dataKeys = array_keys($data);
+// TODO min  max not always useful ?
         [$min, $max] = [min($data), max($data)];
         $maxMin = $max - $min;
         $N = count($data);
@@ -143,9 +104,9 @@ class bar {
         $xBegin = $hGap + $ylegendsW + $ylegendsRightGap;
         $yBegin = $vGap + $titleH + $titleBottomGap;
         $drawAreaW = $N * $barW + ($N-1) * $barGap;
-        // $drawArea given in parameter
+        // $drawAreaH given in parameter
         $xEnd = $xBegin + $drawAreaW;
-        $yEnd = $yBegin + $drawArea;
+        $yEnd = $yBegin + $drawAreaH;
         //
         $deltaY = $yEnd - $yBegin;
         // $h, $w = size of the image

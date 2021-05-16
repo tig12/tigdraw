@@ -3,7 +3,8 @@ SVG data representation
 
 Usage : see tests/ for examples
 
-Released under the <a href="https://www.gnu.org/licenses/gpl.html">General Public Licence</a>
+Released under the General Public Licence
+(https://www.gnu.org/licenses/gpl.html)
 
 Requires php 8.0 or higher
 

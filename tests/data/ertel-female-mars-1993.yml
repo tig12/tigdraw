@@ -1,0 +1,101 @@
+
+# Reproduction of Ertel's
+# Planetary relation with female notabilities, Table 1
+# in Astro-Psychological Problems, p239-1, march 1993
+
+image:
+  svg-separate: false
+  img-src: 
+  img-alt:
+  draw-area-h: 250
+  hGap: 25
+  vGap: 15
+  background: mocassin
+  hover: true
+
+title:
+  label: Sport champions - mars in key sectors
+  style: |
+    text-anchor:left;
+    font-weight:bold;
+    font-size:22px;
+  bottom-gap: 15
+
+bottom: |
+  From Suitbert Ertel "Planetary relation with female notabilities"
+  Published in Astro-Psychological Problems 9-1, march 1993
+  Table 1 p23
+
+x-axis:
+  display: true
+  style: |
+    stroke:black;stroke-width:1;
+  legend:
+    label: Eminence ranks
+    style: |
+      stroke:black;stroke-width:1;
+      font-size:12px;
+  labels:
+    display: true
+    from: min
+    to: max
+    labels: keys
+    round: false
+    style: |
+      stroke:black;stroke-width:1;
+      font-size:12px;
+    
+y-axis:
+  display: true
+  style: |
+    stroke:black;stroke-width:1;
+  legend:
+    label: kS%
+    style: |
+      stroke:black;stroke-width:1;
+      font-size:12px;
+  labels:
+    display: true
+    from: 17
+    to: 40
+    labels: each 5
+    round: 1
+    style: |
+      stroke:black;stroke-width:1;
+      font-size:12px;
+
+data:
+  -
+    label: female
+    style: |
+      stroke:red;
+      stroke-width:2;
+    values:
+      1: 25.0
+      2: 28.1
+      3: 35.0
+      4: 36.6
+      5: 29.6
+  -
+    label: male
+    style: |
+      stroke:blue;
+      stroke-width:2;
+    values:
+      1: 24.4
+      2: 24.8
+      3: 27.0
+      4: 30.6
+      5: 25.5
+  -
+    label: chance
+    style: |
+      stroke:black;
+      stroke-width:1;
+      stroke-dasharray="4, 1";
+    values:
+      1: 22.1
+      2: 22.1
+      3: 22.1
+      4: 22.1
+      5: 22.1
