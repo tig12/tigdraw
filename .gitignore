@@ -1,4 +1,4 @@
-tests/*_test.svg
+tests/*.svg
 
 # files marked for deletion
 z.*

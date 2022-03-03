@@ -76,7 +76,76 @@ class curve {
                     - $res[1] = null
     **/
     public static function svg(array $params = []){
-echo "\n<pre>"; print_r($params); echo "</pre>\n"; exit;
+        $defaults = [
+            'data' => [],
+            'image' => [
+                'svg-separate' => false,
+                'img-src' => '',
+                'img-alt' => '',
+                'draw-area-h' => 250,
+                'hGap' => 25,
+                'vGap' => 15,
+                'background' => 'mocassin',
+                'hover' => true,
+            ],
+            'title' => [
+                'label' => '',
+                'style' => "
+                    text-anchor:left;
+                    font-weight:bold;
+                    font-size:22px;",
+                'bottom-gap' => 15,
+            ],
+            'bottom' => '',
+            'x-axis' => [
+                'display' => true,
+                'style' => 'stroke:black;stroke-width:1;',
+                'legend' => [
+                    'label' => '',
+                    'style' => "
+                        stroke:black;
+                        stroke-width:1;
+                        font-size:12px;",
+                ],
+                'labels' => [
+                    'display' => true,
+                    'from' => '', // min
+                    'to' => '', //max
+                    'labels' => '', //keys
+                    'round' => false,
+                    'style' => "
+                        stroke:black;
+                        stroke-width:1;
+                        font-size:12px;",
+                ],
+            ],
+            'y-axis' => [
+                'display' => true,
+                'style' => "
+                    stroke:black;
+                    stroke-width:1;",
+                'legend' => [
+                    'label' => '',
+                    'style' => "
+                        stroke:black;
+                        stroke-width:1;
+                        font-size:12px;",
+                ],
+                'labels' => [
+                    'display' => true,
+                    'from' => 17,
+                    'to' => 40,
+                    'labels' => 'each 5',
+                    'round' => 1,
+                    'style' => "
+                        stroke:black;
+                        stroke-width:1;
+                        font-size:12px;",
+                ],
+            ],
+        ];
+        
+echo "\n<pre>"; print_r($defaults); echo "</pre>\n"; exit;
         $svg = '';
         // characteristics of data
         $dataKeys = array_keys($data);

@@ -1,6 +1,6 @@
 <?php
 /******************************************************************************
-    svg generation adapted to observe output pages.
+    SVG generation adapted to observe output pages.
     
     @license    GPL
     @history    2021-03-19 01:38:00+01:00, Thierry Graff : Creation

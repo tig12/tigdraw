@@ -17,21 +17,22 @@ class bar {
         Layout : the image is composed of legends, gaps and a bar area (containing only the bars).
         Bar area height is imposed (parameter $barH) ; bar width is computed.
         Image total height and width ($w and $h) are computed (= bar size + lengends and gaps).
-        @return See {@link observe\parts\draw\svg::result()} documentation 
+        
         @param  $data               The data to represent.
                                     Must be an associative array.
                                     keys = x, values on the x axis.
                                     values = y, corresponding values on the y axis, = nb of occurences of x in the distribution.
         @param  $stats              Associative array containing statistical informations about the distribution.
                                     Possible keys:
-                                        - mean
-                                        - top-key
-                                        - top-key-index
+                                        - mean: mean y value.
+                                        - top-key: value of x corresponding to y max.
+                                        - top-key-index: rank in the $data array containing top-key.
         // image, general
         @param  $svg_separate       Save in a separate .svg file ?
-        @param  $img_src            Useful only if $svg_separate = true
+                                    This parameter determines the returned elements.
+        @param  $img_src            Useful only if $svg_separate = true.
                                     In generated client page : <img src="$img_src">
-        @param  $img_alt            Useful only if $svg_separate = true
+        @param  $img_alt            Useful only if $svg_separate = true.
                                     In generated client page : <img alt="$img_alt">
         @param  $hGap               in px - horizontal (left and right) gap of the image.
         @param  $vGap               in px - vertical (left and right) gap of the image.
@@ -46,21 +47,30 @@ class bar {
         @param  $barW               in px - width of each vertical bar.
         @param  $barGap             in px - space between 2 vertical bars.
         @param  $barColor           Color of the vertical bars.
-        @param  $barHover           If true, a tooltip with (key, value) is displayed on mouse hover
+        @param  $barHover           If true, a tooltip with (key, value) is displayed on mouse hover.
         // x and y axis
         @param  $xAxis              draw x axis ?
         @param  $xAxisStyle         Style to draw the line of x axis
         @param  $yAxis              boolean - draw y axis ?
         @param  $yAxisStyle         Style to draw the line of y axis
         // x legends
-        @param  $xlegends           Text to write below the x axis.
-                                    TODO explain syntax
+        @param  $xlegends           Indicates the text to write below the x axis.
+                                    Associative array which can contain the following keys:
+                                        - 'all': in this case, all x values are displayed.
+                                            if 'all' is present, other keys are not considered (because redundant)
+                                        - 'min': the lowest x value is displayed
+                                        - 'max': the highest x value is displayed
+                                        - 'top': the x corresponding to top y value is displayed
+                                            'top' needs that param $stats contains 'top-key' and 'top-key-index'
         @param  $xlegendsH          in px - height of x legends (= font size)
         @param  $xlegendsTopGap     in px - gap between x axis and x legends
                                     Set to 0 if no x legends.
         // y legends
-        @param  $ylegends           Text to write left of the y axis.
-                                    TODO explain syntax
+        @param  $ylegends           Indicates the text to write left of the y axis.
+                                    Associative array which can contain the following keys:
+                                        - 'min': the lowest y value is displayed
+                                        - 'max': the highest y value is displayed
+                                        - 'mean': the (arithmetic) mean y value is displayed
         @param  $ylegendsW          in px - width of y legends.
         @param  $ylegendsH          in px - height of y legends (= font size)
         @param  $ylegendsRightGap   in px - gap between y legends and y axis.
@@ -69,7 +79,7 @@ class bar {
         // other
         @param  $meanLine           Only if $ylegends contain 'mean'
                                     Draw horizontal line for mean ?
-        @param  $meanLineStyle      Style for mean bar
+        @param  $meanLineStyle      Style for mean line
         
         @return Array containing 2 elements.
                 If $svg_separate = true,
@@ -215,7 +225,7 @@ SVG;
         //
         $i = 0;
         foreach($data as $key => $val){
-            $x1 = $xBegin + ($i)*$barGap + $i*$barW;
+            $x1 = $xBegin + $i*$barGap + ($i+0.5)*$barW;
             $y1 = $yEnd;
             $x2 = $x1;
             $y = round(($val-$min) * $deltaY / $maxMin, 1);
@@ -235,25 +245,29 @@ SVG;
         //
         if(!empty($xlegends)){
             $y = $yEnd + $xlegendsTopGap + $xlegendsH;
-            if(in_array('min', $xlegends)){
-                $x = $xBegin;
-                $text = $dataKeys[0];
-                $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$text</text>\n";
+            if(in_array('all', $xlegends)){
+                $i = 0;
+                foreach(array_keys($data) as $key){
+                    $x = $xBegin + $i*$barGap + ($i+0.5)*$barW;
+                    $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$key</text>\n";
+                    $i++;
+                }
             }
-            if(in_array('max', $xlegends)){
-                $x = $xBegin + $drawAreaW;
-                $text = $dataKeys[count($dataKeys)-1];
-                $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$text</text>\n";
-            }
-            if(in_array('top', $xlegends)){
-                $x = $xBegin + ($stats['top-key-index']-1)*$barGap + $stats['top-key-index']*$barW;
-                $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">{$stats['top-key']}</text>\n";
-/* 
-                [$top, $place] = self::compute_top($data);
-                $x = $xBegin + ($place-1)*$barGap + $place*$barW;
-                $text = $top;
-                $svg .= "<text x=\"$x\" y=\"$y\" style=\"$xlegendsStyle\">$text</text>\n";
-*/
+            else{
+                if(in_array('min', $xlegends)){
+                    $x = $xBegin;
+                    $text = $dataKeys[0];
+                    $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$text</text>\n";
+                }
+                if(in_array('max', $xlegends)){
+                    $x = $xBegin + $drawAreaW;
+                    $text = $dataKeys[count($dataKeys)-1];
+                    $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">$text</text>\n";
+                }
+                if(in_array('top', $xlegends)){
+                    $x = $xBegin + ($stats['top-key-index']-1)*$barGap + $stats['top-key-index']*$barW;
+                    $svg .= "<text x=\"$x\" y=\"$y\" class=\"xLegends\">{$stats['top-key']}</text>\n";
+                }
             }
         }
         //
